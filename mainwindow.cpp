@@ -1,5 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QMessageBox>
+
+QLocale l(QLocale::German);
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
@@ -10,16 +13,15 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->lineEdit_I->setValidator(new QIntValidator(1, 1<<30, this));
 	ui->lineEdit_K->setValidator(new QIntValidator(1, 1<<30, this));
 
-	ui->lineEdit_R->setValidator(new QDoubleValidator(0, 1e10, 9, this));
-	ui->lineEdit_k->setValidator(new QDoubleValidator(0, 1e10, 9, this));
-	ui->lineEdit_l->setValidator(new QDoubleValidator(0, 1e10, 9, this));
-	ui->lineEdit_c->setValidator(new QDoubleValidator(0, 1e10, 9, this));
-	ui->lineEdit_alpha->setValidator(new QDoubleValidator(0, 1e10, 9, this));
-	ui->lineEdit_u0->setValidator(new QDoubleValidator(-1e10, 1e10, 9, this));
-	ui->lineEdit_T->setValidator(new QDoubleValidator(0, 1e10, 9, this));
+	ui->lineEdit_R->setValidator(new QDoubleValidator(1e-9, 1e9, 9, this));
+	ui->lineEdit_k->setValidator(new QDoubleValidator(1e-9, 1e9, 9, this));
+	ui->lineEdit_l->setValidator(new QDoubleValidator(1e-9, 1e9, 9, this));
+	ui->lineEdit_c->setValidator(new QDoubleValidator(1e-9, 1e9, 9, this));
+	ui->lineEdit_alpha->setValidator(new QDoubleValidator(0, 1e9, 9, this));
+	ui->lineEdit_T->setValidator(new QDoubleValidator(1e-9, 1e9, 9, this));
 
-	ui->lineEdit_new_r->setValidator(new QDoubleValidator(0, 1e10, 9, this));
-	ui->lineEdit_new_t->setValidator(new QDoubleValidator(0, 1e10, 9, this));
+	ui->lineEdit_new_r->setValidator(new QDoubleValidator(0, 1e9, 9, this));
+	ui->lineEdit_new_t->setValidator(new QDoubleValidator(0, 1e9, 9, this));
 
 	update_lable_hr();
 	update_lable_ht();
@@ -88,7 +90,6 @@ void MainWindow::on_pushButton_clear_clicked()
 	ui->lineEdit_l->setText("1");
 	ui->lineEdit_c->setText("1,84");
 	ui->lineEdit_alpha->setText("0,001");
-	ui->lineEdit_u0->setText("1");
 	ui->lineEdit_T->setText("150");
 
 	ui->lineEdit_new_r->clear();
@@ -98,12 +99,15 @@ void MainWindow::on_pushButton_clear_clicked()
 
 void MainWindow::on_pushButton_start_clicked()
 {
-
+	if(!check_inruts()) {
+		QMessageBox::warning(this, "Внимание!", "Не корректно введены параметры");
+		return;
+	}
 }
 
 void MainWindow::update_lable_hr() {
 	if(ui->lineEdit_I->text() != "" && ui->lineEdit_R->text() != 0) {
-		double R = ui->lineEdit_R->text().toDouble();
+		double R = l.toDouble(ui->lineEdit_R->text());
 		int I = ui->lineEdit_I->text().toInt();
 		ui->label_hr->setText(QString::number(R / I));
 	}
@@ -112,12 +116,33 @@ void MainWindow::update_lable_hr() {
 }
 void MainWindow::update_lable_ht() {
 	if(ui->lineEdit_K->text() != "" && ui->lineEdit_T->text() != 0) {
-		double T = ui->lineEdit_T->text().toDouble();
+		double T = l.toDouble(ui->lineEdit_T->text());
 		int K = ui->lineEdit_K->text().toInt();
 		ui->label_ht->setText(QString::number(T / K));
 	}
 	else
 		ui->label_ht->setText("NaN");
+}
+
+bool MainWindow::check_inruts()
+{
+	if(ui->lineEdit_I->text() == "") return false;
+	if(ui->lineEdit_K->text() == "") return false;
+
+	if(ui->lineEdit_R->text() == "") return false;
+	if(l.toDouble(ui->lineEdit_R->text()) == 0) return false;
+	if(ui->lineEdit_k->text() == "") return false;
+	if(l.toDouble(ui->lineEdit_k->text()) == 0) return false;
+	if(ui->lineEdit_l->text() == "") return false;
+	if(l.toDouble(ui->lineEdit_l->text()) == 0) return false;
+	if(ui->lineEdit_c->text() == "") return false;
+	if(l.toDouble(ui->lineEdit_c->text()) == 0) return false;
+	if(ui->lineEdit_alpha->text() == "") return false;
+	if(ui->lineEdit_T->text() == "") return false;
+	if(l.toDouble(ui->lineEdit_T->text()) == 0) return false;
+
+	if(ui->listWidget_r->count() == 0 && ui->listWidget_t->count() == 0) return false;
+	return true;
 }
 void MainWindow::on_lineEdit_I_textChanged(const QString &arg1)
 {

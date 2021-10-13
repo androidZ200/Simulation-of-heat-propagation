@@ -9,14 +9,20 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    explictschema.cpp \
     horizontalcollector.cpp \
+    implicitschema.cpp \
+    isolver.cpp \
     main.cpp \
     mainwindow.cpp \
     plot.cpp \
     verticalcollector.cpp
 
 HEADERS += \
+    explictschema.h \
     horizontalcollector.h \
+    implicitschema.h \
+    isolver.h \
     mainwindow.h \
     plot.h \
     verticalcollector.h

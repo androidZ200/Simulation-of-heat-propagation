@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QVector>
+#include "horizontalcollector.h"
+#include "verticalcollector.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,6 +33,7 @@ private slots:
 private:
 	void update_lable_hr();
 	void update_lable_ht();
+	bool check_inruts();
 
 	Ui::MainWindow *ui;
 };
