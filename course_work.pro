@@ -9,13 +9,17 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    horizontalcollector.cpp \
     main.cpp \
     mainwindow.cpp \
-    plot.cpp
+    plot.cpp \
+    verticalcollector.cpp
 
 HEADERS += \
+    horizontalcollector.h \
     mainwindow.h \
-    plot.h
+    plot.h \
+    verticalcollector.h
 
 FORMS += \
     mainwindow.ui

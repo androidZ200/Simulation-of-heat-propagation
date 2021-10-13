@@ -15,7 +15,22 @@ public:
 	MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 
+private slots:
+	void on_pushButton_add_r_clicked();
+	void on_pushButton_add_t_clicked();
+	void on_pushButton_remove_r_clicked();
+	void on_pushButton_remove_t_clicked();
+	void on_pushButton_clear_clicked();
+	void on_pushButton_start_clicked();
+	void on_lineEdit_I_textChanged(const QString &arg1);
+	void on_lineEdit_K_textChanged(const QString &arg1);
+	void on_lineEdit_R_textChanged(const QString &arg1);
+	void on_lineEdit_T_textChanged(const QString &arg1);
+
 private:
+	void update_lable_hr();
+	void update_lable_ht();
+
 	Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

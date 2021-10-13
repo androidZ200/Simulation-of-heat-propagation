@@ -61,7 +61,7 @@
         <item row="1" column="1">
          <widget class="QLineEdit" name="lineEdit_k">
           <property name="text">
-           <string>0.01</string>
+           <string>0,01</string>
           </property>
          </widget>
         </item>
@@ -75,7 +75,7 @@
         <item row="2" column="1">
          <widget class="QLineEdit" name="lineEdit_alpha">
           <property name="text">
-           <string>0.001</string>
+           <string>0,001</string>
           </property>
          </widget>
         </item>
@@ -103,7 +103,7 @@
         <item row="4" column="1">
          <widget class="QLineEdit" name="lineEdit_c">
           <property name="text">
-           <string>1.84</string>
+           <string>1,84</string>
           </property>
          </widget>
         </item>
@@ -243,7 +243,7 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLabel" name="label_15">
+             <widget class="QLabel" name="label_hr">
               <property name="text">
                <string>0.0001</string>
               </property>
@@ -257,7 +257,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QLabel" name="label_16">
+             <widget class="QLabel" name="label_ht">
               <property name="text">
                <string>0.0001</string>
               </property>
