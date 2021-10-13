@@ -6,7 +6,7 @@
 #include "horizontalcollector.h"
 #include "verticalcollector.h"
 
-class ISolver
+class ISolver : public QObject
 {
 	Q_OBJECT
 
@@ -18,6 +18,8 @@ protected:
 	QVector<VerticalCollector>* vert_coll = 0;
 	double *first_array = 0;
 	double *second_array = 0;
+	int cur_index = 0;
+	bool isWork;
 
 public:
 	virtual ~ISolver();
@@ -32,7 +34,9 @@ public:
 	double ht() const;
 	QVector<HorizontalCollector>* getHorizontalCollectors() const;
 	QVector<VerticalCollector>* getVerticalCollectors() const;
+public slots:
 	virtual void Start();
+	virtual void Stop();
 
 protected:
 	virtual void step() = 0;

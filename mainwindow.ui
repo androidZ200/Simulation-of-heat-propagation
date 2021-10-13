@@ -6,14 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>340</width>
-    <height>500</height>
+    <width>397</width>
+    <height>515</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>340</width>
+    <width>330</width>
     <height>500</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>440</width>
+    <height>700</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -182,6 +188,9 @@
             </item>
             <item>
              <widget class="QRadioButton" name="radioButton_3">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>кранка николсона</string>
               </property>
@@ -214,7 +223,7 @@
                <locale language="Russian" country="Russia"/>
               </property>
               <property name="text">
-               <string>400</string>
+               <string>4000</string>
               </property>
              </widget>
             </item>
@@ -231,7 +240,7 @@
                <locale language="Russian" country="Russia"/>
               </property>
               <property name="text">
-               <string>600</string>
+               <string>6000</string>
               </property>
              </widget>
             </item>

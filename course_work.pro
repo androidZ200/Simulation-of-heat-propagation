@@ -13,6 +13,7 @@ SOURCES += \
     horizontalcollector.cpp \
     implicitschema.cpp \
     isolver.cpp \
+    loadwindow.cpp \
     main.cpp \
     mainwindow.cpp \
     plot.cpp \
@@ -23,11 +24,13 @@ HEADERS += \
     horizontalcollector.h \
     implicitschema.h \
     isolver.h \
+    loadwindow.h \
     mainwindow.h \
     plot.h \
     verticalcollector.h
 
 FORMS += \
+    loadwindow.ui \
     mainwindow.ui
 
 # Default rules for deployment.

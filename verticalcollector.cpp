@@ -5,6 +5,12 @@ VerticalCollector::VerticalCollector(double r)
 	this->r = r;
 }
 
+VerticalCollector::~VerticalCollector()
+{
+	if(array)
+		delete[] array;
+}
+
 void VerticalCollector::init(double R, int I, int size)
 {
 	double h = R/I;

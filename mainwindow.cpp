@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
+#include "explictschema.h"
+#include "implicitschema.h"
+#include <cmath>
 
 QLocale l(QLocale::German);
 
@@ -82,8 +85,8 @@ void MainWindow::on_pushButton_clear_clicked()
 	ui->listWidget_r->clear();
 	ui->listWidget_t->clear();
 
-	ui->lineEdit_I->setText("400");
-	ui->lineEdit_K->setText("600");
+	ui->lineEdit_I->setText("4000");
+	ui->lineEdit_K->setText("6000");
 
 	ui->lineEdit_R->setText("5");
 	ui->lineEdit_k->setText("0,01");
@@ -96,13 +99,43 @@ void MainWindow::on_pushButton_clear_clicked()
 	ui->lineEdit_new_t->clear();
 }
 
-
+double R;
+double psi(double r) {
+	return std::cyl_bessel_i(0, r*2.4048255/R);
+}
 void MainWindow::on_pushButton_start_clicked()
 {
 	if(!check_inruts()) {
 		QMessageBox::warning(this, "Внимание!", "Не корректно введены параметры");
 		return;
 	}
+	ISolver* sol;
+	QVector<HorizontalCollector>* hor_coll = new QVector<HorizontalCollector>;
+	QVector<VerticalCollector>* vert_coll = new QVector<VerticalCollector>;
+	for(int i = 0; i < ui->listWidget_r->count(); i++)
+		hor_coll->push_back(HorizontalCollector(l.toDouble(ui->listWidget_r->item(i)->text())));
+	for(int i = 0; i < ui->listWidget_t->count(); i++)
+		vert_coll->push_back(VerticalCollector(l.toDouble(ui->listWidget_t->item(i)->text())));
+
+	if(ui->radioButton_1->isChecked())
+		sol = new ExplictSchema();
+	else if(ui->radioButton_2->isChecked())
+		sol = new ImplicitSchema();
+
+	sol->setHorCollectors(hor_coll);
+	sol->setVertCollectors(vert_coll);
+	sol->Init(l.toDouble(ui->lineEdit_R->text()),
+			  l.toDouble(ui->lineEdit_T->text()),
+			  l.toDouble(ui->lineEdit_l->text()),
+			  l.toDouble(ui->lineEdit_k->text()),
+			  l.toDouble(ui->lineEdit_c->text()),
+			  l.toDouble(ui->lineEdit_alpha->text()),
+			  ui->lineEdit_I->text().toInt(),
+			  ui->lineEdit_K->text().toInt());
+	R = l.toDouble(ui->lineEdit_R->text());
+	sol->setBeginingLayer(psi);
+	LoadWindow* loading = new LoadWindow(sol);
+	loading->show();
 }
 
 void MainWindow::update_lable_hr() {

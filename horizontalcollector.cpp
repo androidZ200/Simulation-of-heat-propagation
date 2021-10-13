@@ -5,6 +5,12 @@ HorizontalCollector::HorizontalCollector(double t)
 	this->t = t;
 }
 
+HorizontalCollector::~HorizontalCollector()
+{
+	if(array)
+		delete[] array;
+}
+
 void HorizontalCollector::init(double T, int K, int size)
 {
 	double h = T/K;

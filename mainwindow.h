@@ -5,6 +5,7 @@
 #include <QVector>
 #include "horizontalcollector.h"
 #include "verticalcollector.h"
+#include "loadwindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

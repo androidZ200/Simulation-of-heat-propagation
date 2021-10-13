@@ -1,12 +1,5 @@
 #include "isolver.h"
 
-template <class T>
-void swap(T& a, T&b) {
-	T t = a;
-	a = b;
-	b = t;
-}
-
 ISolver::~ISolver()
 {
 	if(first_array)
@@ -26,6 +19,11 @@ void ISolver::Init(double R, double T, double l, double k,
 	h_t = T/K;
 	first_array = new double[I+1];
 	second_array = new double[I+1];
+
+	for(auto &x : *hor_coll)
+		x.init(T, K, I+1);
+	for(auto &x : *vert_coll)
+		x.init(R, I, K+1);
 }
 
 void ISolver::setHorCollectors(QVector<HorizontalCollector>* coll)
@@ -72,20 +70,29 @@ QVector<VerticalCollector>* ISolver::getVerticalCollectors() const
 
 void ISolver::Start()
 {
-	int end, ind = 0;
+	int end;
+	isWork = true;
 	QVector<HorizontalCollector>::iterator iter = hor_coll->begin();
+	while(iter != hor_coll->end() && iter->getIndex() < cur_index) ++iter;
 
 	while(iter != hor_coll->end()) {
 		end = iter->getIndex();
-		solv_to(end, ind);
+		solv_to(end, cur_index);
+		if(!isWork) return;
 		second_array = iter->setArray(second_array);
 		emit newLayer(*iter);
 		++iter;
 	}
 	end = K;
-	solv_to(end, ind);
+	solv_to(end, cur_index);
+	if(!isWork) return;
 
 	emit Finish();
+}
+
+void ISolver::Stop()
+{
+	isWork = false;
 }
 
 void ISolver::saveVertColl()
@@ -96,10 +103,10 @@ void ISolver::saveVertColl()
 
 void ISolver::solv_to(int end, int& ind)
 {
-	for(;ind<=end;++ind) {
+	for(;ind<=end && isWork;++ind) {
 		saveVertColl();
 		step();
-		swap(first_array, second_array);
+		qSwap(first_array, second_array);
 		emit Process(ind*100.0/K);
 	}
 }

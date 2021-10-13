@@ -3,12 +3,13 @@
 
 class HorizontalCollector
 {
-	double* array;
+	double* array = 0;
 	double t;
 	int index;
 
 public:
 	HorizontalCollector(double t);
+	~HorizontalCollector();
 
 	void init(double T, int K, int size);
 	int getIndex() const;
