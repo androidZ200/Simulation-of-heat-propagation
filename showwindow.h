@@ -28,8 +28,11 @@ private slots:
 
 private slots:
 	void redrawgraphics();
+	void setStepHorizontalGrid(double X);
 
 	void on_listWidget_itemClicked(QListWidgetItem *item);
+
+	void on_pushButton_save_clicked();
 
 private:
 	Ui::ShowWindow *ui;

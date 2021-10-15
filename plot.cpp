@@ -16,9 +16,11 @@ Plot::Plot(double x, double y, double scale, QWidget *parent)
 
 Plot::Plot(QWidget *parent) : Plot(0, 0, 1, parent)
 {
+	setDefaultPlaneStyle();
+	setDefaultGraphicStyle();
 }
 
-void Plot::Reboot()
+void Plot::StartPosition()
 {
     rec = QRectF(-3, 2, 6, -4);
 
@@ -34,7 +36,7 @@ void Plot::addComplexGraphics(std::complex<double> (*f)(double), double start, d
         start += step;
     }
 
-    complexGraphics.push_back(graph);
+	complexGraphics.push_back({graph, defGraphStyle});
     update();
 }
 
@@ -45,7 +47,7 @@ void Plot::addComplexGraphics(std::complex<double> *f, int N, double start, doub
     for(int i = 0; i < N; ++i)
         graph.push_back(QPair<double, std::complex<double>>(start + h*i, f[i]));
 
-    complexGraphics.push_back(graph);
+	complexGraphics.push_back({graph, defGraphStyle});
     update();
 }
 
@@ -58,7 +60,7 @@ void Plot::addRealGraphics(double (*f)(double), double start, double end, double
         start += step;
     }
 
-    realGraphics.push_back(graph);
+	realGraphics.push_back({graph, defGraphStyle});
     update();
 }
 
@@ -69,7 +71,7 @@ void Plot::addRealGraphics(double *f, int N, double start, double end)
     for(int i = 0; i < N; ++i)
         graph.push_back(QPair<double, double>(start + h*i, f[i]));
 
-    realGraphics.push_back(graph);
+	realGraphics.push_back({graph, defGraphStyle});
     update();
 }
 
@@ -80,17 +82,47 @@ void Plot::deleteComplexGraphics(int index)
 
 void Plot::deleteRealGraphics(int index)
 {
-    if(index < realGraphics.size() && index >= 0) realGraphics.erase(realGraphics.begin() + index);
+	if(index < realGraphics.size() && index >= 0) realGraphics.erase(realGraphics.begin() + index);
 }
 
-void Plot::turnedCircle(bool TurnedON)
+int Plot::countRealGraphics() const
 {
-    isDrawCircle = TurnedON;
+	return realGraphics.size();
 }
 
-void Plot::showGrid(bool on)
+int Plot::countComplexGraphics() const
 {
-	isDrawGrid = on;
+	return complexGraphics.size();
+}
+
+void Plot::setComplexGraphicStyle(GlGraphicStyle style, int index)
+{
+	complexGraphics[index].style = style;
+}
+
+void Plot::setRealGraphicStyle(GlGraphicStyle style, int index)
+{
+	realGraphics[index].style = style;
+}
+
+GlGraphicStyle Plot::getComplexGraphicStyle(int index) const
+{
+	return complexGraphics[index].style;
+}
+
+GlGraphicStyle Plot::getRealGraphicStyle(int index) const
+{
+	return realGraphics[index].style;
+}
+
+GlGraphicStyle& Plot::ComplexGraphicStyle(int index)
+{
+	return complexGraphics[index].style;
+}
+
+GlGraphicStyle& Plot::RealGraphicStyle(int index)
+{
+	return realGraphics[index].style;
 }
 
 void Plot::ClearAll()
@@ -99,14 +131,25 @@ void Plot::ClearAll()
 	realGraphics.clear();
 }
 
-void Plot::SetPositin(QRect rect)
+void Plot::SetPositin(QRectF rect)
 {
 	rec = rect;
 }
 
-void Plot::AllowMove(bool allow)
+GLPlaneStyle Plot::getStylePlane() const
 {
-	isMoving = allow;
+	return plStyle;
+}
+
+GLPlaneStyle& Plot::StylePlane()
+{
+	return plStyle;
+}
+
+void Plot::setStylePlane(GLPlaneStyle style)
+{
+	plStyle = style;
+	updateBackground();
 }
 
 void Plot::Move(QPointF offset)
@@ -132,8 +175,8 @@ void Plot::Zoom(double zoom, QPointF mouse)
 
 void Plot::initializeGL()
 {
-    glClearColor(1, 1, 1, 1);
-    glDisable(GL_DEPTH_TEST);
+	updateBackground();
+	glDisable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
 }
 
@@ -142,16 +185,18 @@ void Plot::resizeGL(int w, int h)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    double dw = (w - win.width()) / 2.0 / zoomX();
-    double dh = (h - win.height()) / 2.0 / zoomY();
-
     win.setWidth(w);
     win.setHeight(h);
 
-    rec.setLeft(rec.left() - dw);
-    rec.setRight(rec.right() + dw);
-    rec.setTop(rec.top() + dh);
-    rec.setBottom(rec.bottom() - dh);
+	if(plStyle.resize_style == GLPlaneStyle::ResizeStyle::fixed_zoom) {
+		double dw = (w - win.width()) / 2.0 / zoomX();
+		double dh = (h - win.height()) / 2.0 / zoomY();
+
+		rec.setLeft(rec.left() - dw);
+		rec.setRight(rec.right() + dw);
+		rec.setTop(rec.top() + dh);
+		rec.setBottom(rec.bottom() - dh);
+	}
 
     glOrtho(rec.left(), rec.right(), rec.bottom(), rec.top(), -1, 1);
     glViewport(0, 0, (GLint)w, (GLint)h);
@@ -165,11 +210,13 @@ void Plot::paintGL()
     glLoadIdentity();
     glOrtho(rec.left(), rec.right(), rec.bottom(), rec.top(), -1, 1);
 
-    if(isDrawGrid) drawGrid();
-    drawAxis();
-    for(int i = 0; i < complexGraphics.size(); ++i) drawComGrpg(i);
-    for(int i = 0; i < realGraphics.size(); ++i) drawRealGraph(i);
-    if(isDrawCircle) drawCircle();
+	if(plStyle.show_grid) drawGrid();
+	if(plStyle.show_axis) drawAxis();
+	for(int i = 0; i < complexGraphics.size(); ++i)
+		if(!complexGraphics[i].style.hiden) drawComGrpg(i);
+	for(int i = 0; i < realGraphics.size(); ++i)
+		if(!realGraphics[i].style.hiden) drawRealGraph(i);
+	if(plStyle.show_circle) drawCircle();
 }
 
 void Plot::mousePressEvent(QMouseEvent *pe)
@@ -179,7 +226,7 @@ void Plot::mousePressEvent(QMouseEvent *pe)
 
 void Plot::mouseMoveEvent(QMouseEvent *pe)
 {
-	if(!isMoving) return;
+	if(!plStyle.is_moving) return;
     QPointF diff = pe->pos() - mouse;
     diff.setX(-diff.x() / zoomX());
     diff.setY(diff.y() / zoomY());
@@ -190,9 +237,10 @@ void Plot::mouseMoveEvent(QMouseEvent *pe)
 
 void Plot::wheelEvent(QWheelEvent *pe)
 {
-    double t = 1;
-    if(pe->angleDelta().y() > 0) t /= 1.1;
-    else if(pe->angleDelta().y() < 0) t *= 1.1;
+	if(!plStyle.is_moving) return;
+	double t;
+	if(pe->angleDelta().y() > 0) t = 1.1;
+	else if(pe->angleDelta().y() < 0) t = 1.1;
 
     QPointF m = rec.topLeft();
     m.setX(m.x() + pe->position().x() * rec.width() / win.width());
@@ -205,25 +253,34 @@ void Plot::wheelEvent(QWheelEvent *pe)
 void Plot::drawGrid()
 {
     glLineWidth(0.8f);
-    glColor4f(0.80f, 0.80f, 0.80f, 1.0f);
+	QColor& col = plStyle.color_grid;
+	glColor4f(col.red() / 255.0f, col.green() / 255.0f, col.blue() / 255.0f, 1.0f);
 
     glBegin(GL_LINES);
-    for(int i = rec.left(); i < rec.right(); i++) {
+	for(float i = 0; i < rec.right(); i += plStyle.steps_grid.width()) {
         glVertex3f( i,   rec.top(), 0.0f);
         glVertex3f( i,  rec.bottom(), 0.0f);
-    }
-
-    for(int i = rec.bottom(); i < rec.top(); i++) {
+	}
+	for(float i = 0; i > rec.left(); i -= plStyle.steps_grid.width()) {
+		glVertex3f( i,   rec.top(), 0.0f);
+		glVertex3f( i,  rec.bottom(), 0.0f);
+	}
+	for(float i = 0; i < rec.top(); i += plStyle.steps_grid.height()) {
         glVertex3f(rec.left(),  i,  0.0f);
         glVertex3f(rec.right(),  i,  0.0f);
     }
+	for(float i = 0; i > rec.bottom(); i -= plStyle.steps_grid.height()) {
+		glVertex3f(rec.left(),  i,  0.0f);
+		glVertex3f(rec.right(),  i,  0.0f);
+	}
     glEnd();
 }
 
 void Plot::drawAxis()
 {
-    glLineWidth(1.0f);
-    glColor4f(0.00f, 0.00f, 0.00f, 1.0f);
+	glLineWidth(plStyle.weight_axis);
+	QColor& col = plStyle.color_axis;
+	glColor4f(col.red() / 255.0f, col.green() / 255.0f, col.blue() / 255.0f, 1.0f);
     glBegin(GL_LINES);
         glVertex3f(rec.left(),  0.0f,  0.0f);
         glVertex3f(rec.right(),  0.0f,  0.0f);
@@ -234,10 +291,10 @@ void Plot::drawAxis()
 
 void Plot::drawComGrpg(int index)
 {
-    glLineWidth(3.0f);
+	glLineWidth(complexGraphics[index].style.weight);
     QColor col;
     glBegin(GL_LINE_STRIP);
-    for(auto &x : complexGraphics[index]) {
+	for(auto &x : complexGraphics[index].graphic) {
         double mod = sqrt(x.second.real() * x.second.real() + x.second.imag() * x.second.imag());
         double arg = atan2(x.second.imag(), x.second.real());
         col = QColor::fromHsv(arg / pi * 180 + 180, 255, 255);
@@ -249,10 +306,11 @@ void Plot::drawComGrpg(int index)
 
 void Plot::drawRealGraph(int index)
 {
-    glLineWidth(1.0f);
-    glColor4f(0.40f, 0.00f, 0.00f, 1.0f);
+	glLineWidth(realGraphics[index].style.weight);
+	QColor& col = realGraphics[index].style.color;
+	glColor4f(col.red() / 255.0f, col.green() / 255.0f, col.blue() / 255.0f, 1.0f);
     glBegin(GL_LINE_STRIP);
-    for(auto &x : realGraphics[index]) {
+	for(auto &x : realGraphics[index].graphic) {
         glVertex3f(x.first, x.second, 0);
     }
     glEnd();
@@ -271,7 +329,36 @@ void Plot::drawCircle()
         glVertex3f(A*(cos(i * pi / 180) + Shift) / zoomX() + rec.left(),
                    A*(sin(i * pi / 180) - Shift) / zoomY() + rec.top(), 0);
     }
-    glEnd();
+	glEnd();
+}
+
+void Plot::updateBackground()
+{
+	QColor &col = plStyle.background;
+	glClearColor(col.red() / 255.0f, col.green() / 255.0f, col.blue() / 255.0f, 1.0f);
+}
+
+void Plot::setDefaultPlaneStyle()
+{
+	plStyle.background = Qt::GlobalColor::white;
+	plStyle.color_axis = Qt::GlobalColor::black;
+	plStyle.color_grid = QColor::fromRgb(200, 200, 200);
+
+	plStyle.show_axis = true;
+	plStyle.show_circle = false;
+	plStyle.show_grid = false;
+	plStyle.steps_grid = QSize(1, 1);
+	plStyle.weight_axis = 2.0f;
+
+	plStyle.is_moving = true;
+	plStyle.resize_style = GLPlaneStyle::ResizeStyle::fixed_zoom;
+}
+
+void Plot::setDefaultGraphicStyle()
+{
+	defGraphStyle.color = QColor::fromRgb(100, 0, 0);
+	defGraphStyle.weight = 1.0f;
+	defGraphStyle.hiden = false;
 }
 
 double Plot::zoomX()
