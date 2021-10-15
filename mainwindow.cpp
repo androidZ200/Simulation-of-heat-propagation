@@ -17,10 +17,10 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->lineEdit_K->setValidator(new QIntValidator(1, 1<<30, this));
 
 	ui->lineEdit_R->setValidator(new QDoubleValidator(1e-9, 1e9, 9, this));
-	ui->lineEdit_k->setValidator(new QDoubleValidator(1e-9, 1e9, 9, this));
+	ui->lineEdit_k->setValidator(new QDoubleValidator(0, 1e9, 9, this));
 	ui->lineEdit_l->setValidator(new QDoubleValidator(1e-9, 1e9, 9, this));
 	ui->lineEdit_c->setValidator(new QDoubleValidator(1e-9, 1e9, 9, this));
-	ui->lineEdit_alpha->setValidator(new QDoubleValidator(0, 1e9, 9, this));
+	ui->lineEdit_alpha->setValidator(new QDoubleValidator(-1e9, 1e9, 9, this));
 	ui->lineEdit_T->setValidator(new QDoubleValidator(1e-9, 1e9, 9, this));
 
 	ui->lineEdit_new_r->setValidator(new QDoubleValidator(0, 1e9, 9, this));
@@ -42,9 +42,12 @@ void MainWindow::on_pushButton_add_r_clicked()
 		for(int i = 0; i < ui->listWidget_r->count(); i++)
 			if(ui->listWidget_r->item(i)->text() == ui->lineEdit_new_r->text())
 				return;
-		ui->listWidget_r->addItem(ui->lineEdit_new_r->text());
+		QListWidgetItem *item = new QListWidgetItem();
+		item->setData(Qt::DisplayRole, l.toDouble(ui->lineEdit_new_r->text()));
+		ui->listWidget_r->addItem(item);
 	}
 	ui->listWidget_r->sortItems();
+	checkListR();
 }
 
 
@@ -54,9 +57,12 @@ void MainWindow::on_pushButton_add_t_clicked()
 		for(int i = 0; i < ui->listWidget_t->count(); i++)
 			if(ui->listWidget_t->item(i)->text() == ui->lineEdit_new_t->text())
 				return;
-		ui->listWidget_t->addItem(ui->lineEdit_new_t->text());
+		QListWidgetItem *item = new QListWidgetItem();
+		item->setData(Qt::DisplayRole, l.toDouble(ui->lineEdit_new_t->text()));
+		ui->listWidget_t->addItem(item);
 	}
-	ui->listWidget_r->sortItems();
+	ui->listWidget_t->sortItems();
+	checkListT();
 }
 
 
@@ -101,7 +107,7 @@ void MainWindow::on_pushButton_clear_clicked()
 
 double R;
 double psi(double r) {
-	return std::cyl_bessel_i(0, r*2.4048255/R);
+	return std::cyl_bessel_j(0, r*2.4048255/R);
 }
 void MainWindow::on_pushButton_start_clicked()
 {
@@ -112,10 +118,16 @@ void MainWindow::on_pushButton_start_clicked()
 	ISolver* sol;
 	QVector<HorizontalCollector>* hor_coll = new QVector<HorizontalCollector>;
 	QVector<VerticalCollector>* vert_coll = new QVector<VerticalCollector>;
-	for(int i = 0; i < ui->listWidget_r->count(); i++)
-		hor_coll->push_back(HorizontalCollector(l.toDouble(ui->listWidget_r->item(i)->text())));
-	for(int i = 0; i < ui->listWidget_t->count(); i++)
-		vert_coll->push_back(VerticalCollector(l.toDouble(ui->listWidget_t->item(i)->text())));
+	for(int i = 0; i < ui->listWidget_t->count(); i++) {
+		double t = l.toDouble(ui->listWidget_t->item(i)->text());
+		if(t <= l.toDouble(ui->lineEdit_T->text()))
+			hor_coll->push_back(HorizontalCollector(t));
+	}
+	for(int i = 0; i < ui->listWidget_r->count(); i++) {
+		double r = l.toDouble(ui->listWidget_r->item(i)->text());
+		if(r <= l.toDouble(ui->lineEdit_R->text()))
+			vert_coll->push_back(VerticalCollector(r));
+	}
 
 	if(ui->radioButton_1->isChecked())
 		sol = new ExplictSchema();
@@ -165,7 +177,6 @@ bool MainWindow::check_inruts()
 	if(ui->lineEdit_R->text() == "") return false;
 	if(l.toDouble(ui->lineEdit_R->text()) == 0) return false;
 	if(ui->lineEdit_k->text() == "") return false;
-	if(l.toDouble(ui->lineEdit_k->text()) == 0) return false;
 	if(ui->lineEdit_l->text() == "") return false;
 	if(l.toDouble(ui->lineEdit_l->text()) == 0) return false;
 	if(ui->lineEdit_c->text() == "") return false;
@@ -176,6 +187,32 @@ bool MainWindow::check_inruts()
 
 	if(ui->listWidget_r->count() == 0 && ui->listWidget_t->count() == 0) return false;
 	return true;
+}
+
+void MainWindow::checkListR()
+{
+
+	double R = l.toDouble(ui->lineEdit_R->text());
+	for(int i = 0; i < ui->listWidget_r->count(); i++) {
+		auto item = ui->listWidget_r->item(i);
+		if(l.toDouble(item->text()) > R)
+			item->setTextColor(Qt::GlobalColor::red);
+		else
+			item->setTextColor(QApplication::palette().text().color());
+
+
+	}
+}
+void MainWindow::checkListT()
+{
+	double T = l.toDouble(ui->lineEdit_T->text());
+	for(int i = 0; i < ui->listWidget_t->count(); i++) {
+		auto item = ui->listWidget_t->item(i);
+		if(l.toDouble(item->text()) > T)
+			item->setTextColor(Qt::GlobalColor::red);
+		else
+			item->setTextColor(QApplication::palette().text().color());
+	}
 }
 void MainWindow::on_lineEdit_I_textChanged(const QString &arg1)
 {
@@ -192,11 +229,25 @@ void MainWindow::on_lineEdit_K_textChanged(const QString &arg1)
 void MainWindow::on_lineEdit_R_textChanged(const QString &arg1)
 {
 	update_lable_hr();
+	checkListR();
 }
 
 
 void MainWindow::on_lineEdit_T_textChanged(const QString &arg1)
 {
 	update_lable_ht();
+	checkListT();
+}
+
+
+void MainWindow::on_lineEdit_new_r_returnPressed()
+{
+	ui->pushButton_add_r->clicked();
+}
+
+
+void MainWindow::on_lineEdit_new_t_returnPressed()
+{
+	ui->pushButton_add_t->clicked();
 }
 

@@ -90,7 +90,23 @@ void Plot::turnedCircle(bool TurnedON)
 
 void Plot::showGrid(bool on)
 {
-    isDrawGrid = on;
+	isDrawGrid = on;
+}
+
+void Plot::ClearAll()
+{
+	complexGraphics.clear();
+	realGraphics.clear();
+}
+
+void Plot::SetPositin(QRect rect)
+{
+	rec = rect;
+}
+
+void Plot::AllowMove(bool allow)
+{
+	isMoving = allow;
 }
 
 void Plot::Move(QPointF offset)
@@ -163,6 +179,7 @@ void Plot::mousePressEvent(QMouseEvent *pe)
 
 void Plot::mouseMoveEvent(QMouseEvent *pe)
 {
+	if(!isMoving) return;
     QPointF diff = pe->pos() - mouse;
     diff.setX(-diff.x() / zoomX());
     diff.setY(diff.y() / zoomY());

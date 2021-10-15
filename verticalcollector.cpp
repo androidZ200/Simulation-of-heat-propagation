@@ -24,6 +24,11 @@ int VerticalCollector::getIndex() const
 	return index;
 }
 
+double VerticalCollector::getR() const
+{
+	return r;
+}
+
 void VerticalCollector::setItem(double u)
 {
 	array[localIndex++] = u;

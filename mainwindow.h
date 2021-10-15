@@ -30,11 +30,15 @@ private slots:
 	void on_lineEdit_K_textChanged(const QString &arg1);
 	void on_lineEdit_R_textChanged(const QString &arg1);
 	void on_lineEdit_T_textChanged(const QString &arg1);
+	void on_lineEdit_new_r_returnPressed();
+	void on_lineEdit_new_t_returnPressed();
 
 private:
 	void update_lable_hr();
 	void update_lable_ht();
 	bool check_inruts();
+	void checkListR();
+	void checkListT();
 
 	Ui::MainWindow *ui;
 };

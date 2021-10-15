@@ -17,6 +17,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     plot.cpp \
+    showwindow.cpp \
     verticalcollector.cpp
 
 HEADERS += \
@@ -27,11 +28,13 @@ HEADERS += \
     loadwindow.h \
     mainwindow.h \
     plot.h \
+    showwindow.h \
     verticalcollector.h
 
 FORMS += \
     loadwindow.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    showwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

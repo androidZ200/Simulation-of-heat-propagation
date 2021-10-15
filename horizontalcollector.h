@@ -13,6 +13,7 @@ public:
 
 	void init(double T, int K, int size);
 	int getIndex() const;
+	double getT() const;
 	double* setArray(double* arr);
 
 	double* getArray() const;

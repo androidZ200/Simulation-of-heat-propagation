@@ -15,7 +15,6 @@ LoadWindow::LoadWindow(ISolver* solver, QWidget *parent) :
 	connect(solver, &ISolver::Finish, this, &LoadWindow::GetResult);
 	connect(solver, &ISolver::Process, this, &LoadWindow::Progress);
 	connect(&thread, &QThread::started, solver, &ISolver::Start);
-	connect(solver, &ISolver::Finish, solver, &ISolver::deleteLater);
 
 	thread.start();
 }
@@ -36,8 +35,10 @@ void LoadWindow::on_pushButton_cancel_clicked()
 
 void LoadWindow::GetResult()
 {
-	delete hor_coll;
-	delete vert_coll;
+	ShowWindow *win = new ShowWindow(solver->getI(), solver->getK(),
+			solver->getR(), solver->getT(), hor_coll, vert_coll);
+	solver->deleteLater();
+	win->show();
 	this->close();
 }
 
@@ -52,12 +53,12 @@ void LoadWindow::on_pushButton_start_stop_clicked()
 	if(isStarting) {
 		isStarting = false;
 		solver->Stop();
-		ui->pushButton_start_stop->setText("Start");
+		ui->pushButton_start_stop->setText("Старт");
 	}
 	else {
 		isStarting = true;
 		QMetaObject::invokeMethod(solver, "Start");
-		ui->pushButton_start_stop->setText("Pause");
+		ui->pushButton_start_stop->setText("Пауза");
 	}
 }
 

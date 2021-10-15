@@ -13,6 +13,8 @@ void ISolver::Init(double R, double T, double l, double k,
 {
 	this->I = I;
 	this->K = K;
+	this->R = R;
+	this->T = T;
 	k_c = k/c;
 	alpha_cl = 2*alpha/c/l;
 	h_r = R/I;
@@ -68,6 +70,26 @@ QVector<VerticalCollector>* ISolver::getVerticalCollectors() const
 	return vert_coll;
 }
 
+int ISolver::getI() const
+{
+	return I;
+}
+
+int ISolver::getK() const
+{
+	return K;
+}
+
+double ISolver::getR() const
+{
+	return R;
+}
+
+double ISolver::getT() const
+{
+	return T;
+}
+
 void ISolver::Start()
 {
 	int end;
@@ -82,6 +104,10 @@ void ISolver::Start()
 		second_array = iter->setArray(second_array);
 		emit newLayer(*iter);
 		++iter;
+	}
+	if(vert_coll->size() == 0) {
+		emit Finish();
+		return;
 	}
 	end = K;
 	solv_to(end, cur_index);

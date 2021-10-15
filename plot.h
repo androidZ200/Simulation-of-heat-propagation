@@ -24,6 +24,9 @@ public:
     void deleteRealGraphics(int index);
     void turnedCircle(bool TurnedON);
     void showGrid(bool on);
+	void ClearAll();
+	void SetPositin(QRect rect);
+	void AllowMove(bool allow);
 
 public slots:
     void Move(QPointF offset);
@@ -53,6 +56,7 @@ private:
     QPoint mouse;
     bool isDrawCircle = false;
     bool isDrawGrid = false;
+	bool isMoving = true;
 
     double zoomX();
     double zoomY();

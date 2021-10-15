@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "isolver.h"
+#include "showwindow.h"
 #include <QThread>
 
 namespace Ui {

@@ -14,6 +14,7 @@ public:
 
 	void init(double R, int I, int size);
 	int getIndex() const;
+	double getR() const;
 	void setItem(double u);
 
 	double* getArray() const;

@@ -24,6 +24,11 @@ int HorizontalCollector::getIndex() const
 	return index;
 }
 
+double HorizontalCollector::getT() const
+{
+	return t;
+}
+
 double* HorizontalCollector::setArray(double* arr)
 {
 	double* t = array;

@@ -13,7 +13,7 @@ class ISolver : public QObject
 protected:
 	int I, K;
 	double k_c, alpha_cl;
-	double h_r, h_t;
+	double h_r, h_t, R, T;
 	QVector<HorizontalCollector>* hor_coll = 0;
 	QVector<VerticalCollector>* vert_coll = 0;
 	double *first_array = 0;
@@ -34,6 +34,10 @@ public:
 	double ht() const;
 	QVector<HorizontalCollector>* getHorizontalCollectors() const;
 	QVector<VerticalCollector>* getVerticalCollectors() const;
+	int getI() const;
+	int getK() const;
+	double getR() const;
+	double getT() const;
 public slots:
 	virtual void Start();
 	virtual void Stop();
