@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include "explictschema.h"
 #include "implicitschema.h"
+#include "cranknicholsonscheme.h"
 #include <cmath>
 
 QLocale l(QLocale::German);
@@ -133,6 +134,8 @@ void MainWindow::on_pushButton_start_clicked()
 		sol = new ExplictSchema();
 	else if(ui->radioButton_2->isChecked())
 		sol = new ImplicitSchema();
+	else if(ui->radioButton_3->isChecked())
+		sol = new CrankNicholsonScheme();
 
 	sol->setHorCollectors(hor_coll);
 	sol->setVertCollectors(vert_coll);

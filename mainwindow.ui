@@ -189,7 +189,7 @@
             <item>
              <widget class="QRadioButton" name="radioButton_3">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="text">
                <string>кранка николсона</string>

@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    cranknicholsonscheme.cpp \
     explictschema.cpp \
     horizontalcollector.cpp \
     implicitschema.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
     verticalcollector.cpp
 
 HEADERS += \
+    cranknicholsonscheme.h \
     explictschema.h \
     horizontalcollector.h \
     implicitschema.h \
