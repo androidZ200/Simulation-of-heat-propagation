@@ -1,6 +1,5 @@
 #include "implicitschema.h"
 
-
 ImplicitSchema::~ImplicitSchema()
 {
 	delete[] a;

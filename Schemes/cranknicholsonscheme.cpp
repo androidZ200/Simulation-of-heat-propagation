@@ -1,6 +1,5 @@
 #include "cranknicholsonscheme.h"
 
-
 CrankNicholsonScheme::~CrankNicholsonScheme()
 {
 	delete[] a;

@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 #include <QVector>
-#include "horizontalcollector.h"
-#include "verticalcollector.h"
+#include "Collectors/horizontalcollector.h"
+#include "Collectors/verticalcollector.h"
 #include "loadwindow.h"
 
 QT_BEGIN_NAMESPACE

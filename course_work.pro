@@ -9,29 +9,33 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    cranknicholsonscheme.cpp \
-    explictschema.cpp \
-    horizontalcollector.cpp \
-    implicitschema.cpp \
-    isolver.cpp \
+    Schemes/cranknicholsonscheme.cpp \
+    Schemes/explictschema.cpp \
+    GlPlot/glcomplexplot.cpp \
+    GlPlot/glplot.cpp \
+    GlPlot/glrealplot.cpp \
+    Collectors/horizontalcollector.cpp \
+    Schemes/implicitschema.cpp \
+    Schemes/isolver.cpp \
     loadwindow.cpp \
     main.cpp \
     mainwindow.cpp \
-    plot.cpp \
     showwindow.cpp \
-    verticalcollector.cpp
+    Collectors/verticalcollector.cpp
 
 HEADERS += \
-    cranknicholsonscheme.h \
-    explictschema.h \
-    horizontalcollector.h \
-    implicitschema.h \
-    isolver.h \
+    Schemes/cranknicholsonscheme.h \
+    Schemes/explictschema.h \
+    GlPlot/glcomplexplot.h \
+    GlPlot/glplot.h \
+    GlPlot/glrealplot.h \
+    Collectors/horizontalcollector.h \
+    Schemes/implicitschema.h \
+    Schemes/isolver.h \
     loadwindow.h \
     mainwindow.h \
-    plot.h \
     showwindow.h \
-    verticalcollector.h
+    Collectors/verticalcollector.h
 
 FORMS += \
     loadwindow.ui \

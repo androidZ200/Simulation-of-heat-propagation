@@ -2,7 +2,7 @@
 #define LOADWINDOW_H
 
 #include <QWidget>
-#include "isolver.h"
+#include "Schemes/isolver.h"
 #include "showwindow.h"
 #include <QThread>
 

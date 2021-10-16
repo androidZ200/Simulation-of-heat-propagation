@@ -1,9 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
-#include "explictschema.h"
-#include "implicitschema.h"
-#include "cranknicholsonscheme.h"
+#include "Schemes/explictschema.h"
+#include "Schemes/implicitschema.h"
+#include "Schemes/cranknicholsonscheme.h"
 #include <cmath>
 
 QLocale l(QLocale::German);

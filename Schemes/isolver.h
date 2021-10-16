@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QVector>
-#include "horizontalcollector.h"
-#include "verticalcollector.h"
+#include "Collectors/horizontalcollector.h"
+#include "Collectors/verticalcollector.h"
 
 class ISolver : public QObject
 {

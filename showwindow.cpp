@@ -54,7 +54,7 @@ void ShowWindow::updateList()
 		for(int i = 0; i < hor_coll->size(); i++)
 			ui->listWidget->addItem("t = " + QString::number((*hor_coll)[i].getT()));
 		for(int i = 0; i < hor_coll->size(); i++)
-			ui->openGLWidget->addRealGraphics((*hor_coll)[i].getArray(), I+1, 0, R);
+			ui->openGLWidget->addGraphics((*hor_coll)[i].getArray(), I+1, 0, R);
 		setStepHorizontalGrid(R);
 	}
 	else {
@@ -62,7 +62,7 @@ void ShowWindow::updateList()
 		for(int i = 0; i < vert_coll->size(); i++)
 			ui->listWidget->addItem("r = " + QString::number((*vert_coll)[i].getR()));
 		for(int i = 0; i < vert_coll->size(); i++)
-			ui->openGLWidget->addRealGraphics((*vert_coll)[i].getArray(), K+1, 0, T);
+			ui->openGLWidget->addGraphics((*vert_coll)[i].getArray(), K+1, 0, T);
 		setStepHorizontalGrid(T);
 	}
 	setCheckedItems();
@@ -73,16 +73,16 @@ void ShowWindow::redrawgraphics()
 	auto s_items = ui->listWidget->selectedItems();
 	for(int i = 0; i < ui->listWidget->count(); i++) {
 		if(ui->listWidget->item(i)->checkState())
-			ui->openGLWidget->RealGraphicStyle(i).hiden = false;
+			ui->openGLWidget->graphicStyle(i).hiden = false;
 		else
-			ui->openGLWidget->RealGraphicStyle(i).hiden = true;
+			ui->openGLWidget->graphicStyle(i).hiden = true;
 		if(s_items.contains(ui->listWidget->item(i))) {
-			ui->openGLWidget->RealGraphicStyle(i).color = QColor::fromRgb(0, 0, 180);
-			ui->openGLWidget->RealGraphicStyle(i).weight = 1.5f;
+			ui->openGLWidget->graphicStyle(i).color = QColor::fromRgb(0, 0, 180);
+			ui->openGLWidget->graphicStyle(i).weight = 1.5f;
 		}
 		else {
-			ui->openGLWidget->RealGraphicStyle(i).color = QColor::fromRgb(100, 0, 0);
-			ui->openGLWidget->RealGraphicStyle(i).weight = 1.0f;
+			ui->openGLWidget->graphicStyle(i).color = QColor::fromRgb(100, 0, 0);
+			ui->openGLWidget->graphicStyle(i).weight = 1.0f;
 		}
 	}
 	ui->openGLWidget->update();

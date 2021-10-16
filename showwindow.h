@@ -2,11 +2,11 @@
 #define SHOWWINDOW_H
 
 #include <QWidget>
-#include "plot.h"
+#include "GlPlot/glplot.h"
 #include <QVector>
 #include <QListWidgetItem>
-#include "horizontalcollector.h"
-#include "verticalcollector.h"
+#include "Collectors/horizontalcollector.h"
+#include "Collectors/verticalcollector.h"
 
 namespace Ui {
 class ShowWindow;
