@@ -21,8 +21,8 @@ void CrankNicholsonScheme::Init(double R, double T, double l, double k,
 	A = new double[I-1];
 	C = new double[I-1];
 
-	B0 = (2*k_c/h_r/h_r + alpha_cl)*h_t;
-	Bi = (  k_c/h_r/h_r + alpha_cl)*h_t;
+	B0 = (2*k_c/h_r/h_r + alpha_cl/2)*h_t;
+	Bi = (  k_c/h_r/h_r + alpha_cl/2)*h_t;
 
 	C[0] = -2*k_c*h_t/h_r/h_r;
 	a[0] = -C[0] /(1 + B0);
@@ -47,8 +47,7 @@ void CrankNicholsonScheme::step()
 		b[i] = (Fi - A[i-1]*b[i-1])/(A[i-1]*a[i-1] + 1 + Bi);
 	}
 
-	Fi = -A[I-2]*first_array[I-2] + (1-Bi)*first_array[I-1] -
-			C[I-1]*first_array[I];
+	Fi = -A[I-2]*first_array[I-2] + (1-Bi)*first_array[I-1];
 	second_array[I-1] = (Fi - A[I-2]*b[I-2])/(A[I-2]*a[I-2] + 1 + Bi);
 	for(int i = I-2; i >= 0; i--)
 		second_array[i] = a[i]*second_array[i+1] + b[i];
