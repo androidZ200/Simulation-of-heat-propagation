@@ -6,7 +6,7 @@
 #include "Schemes/cranknicholsonscheme.h"
 #include <cmath>
 
-QLocale l(QLocale::German);
+QLocale lang(QLocale::German);
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
@@ -29,6 +29,22 @@ MainWindow::MainWindow(QWidget *parent)
 
 	update_lable_hr();
 	update_lable_ht();
+
+	connect(ui->lineEdit_I, &QLineEdit::textChanged, this, &MainWindow::checkInputs);
+	connect(ui->lineEdit_K, &QLineEdit::textChanged, this, &MainWindow::checkInputs);
+	connect(ui->lineEdit_R, &QLineEdit::textChanged, this, &MainWindow::checkInputs);
+	connect(ui->lineEdit_T, &QLineEdit::textChanged, this, &MainWindow::checkInputs);
+	connect(ui->lineEdit_k, &QLineEdit::textChanged, this, &MainWindow::checkInputs);
+	connect(ui->lineEdit_l, &QLineEdit::textChanged, this, &MainWindow::checkInputs);
+	connect(ui->lineEdit_c, &QLineEdit::textChanged, this, &MainWindow::checkInputs);
+	connect(ui->lineEdit_alpha, &QLineEdit::textChanged, this, &MainWindow::checkInputs);
+
+	connect(ui->pushButton_add_r, &QPushButton::clicked, this, &MainWindow::checkInputs);
+	connect(ui->pushButton_add_t, &QPushButton::clicked, this, &MainWindow::checkInputs);
+	connect(ui->pushButton_remove_r, &QPushButton::clicked, this, &MainWindow::checkInputs);
+	connect(ui->pushButton_remove_t, &QPushButton::clicked, this, &MainWindow::checkInputs);
+	connect(ui->pushButton_clear, &QPushButton::clicked, this, &MainWindow::checkInputs);
+	checkInputs();
 }
 
 MainWindow::~MainWindow()
@@ -44,7 +60,7 @@ void MainWindow::on_pushButton_add_r_clicked()
 			if(ui->listWidget_r->item(i)->text() == ui->lineEdit_new_r->text())
 				return;
 		QListWidgetItem *item = new QListWidgetItem();
-		item->setData(Qt::DisplayRole, l.toDouble(ui->lineEdit_new_r->text()));
+		item->setData(Qt::DisplayRole, lang.toDouble(ui->lineEdit_new_r->text()));
 		ui->listWidget_r->addItem(item);
 	}
 	ui->listWidget_r->sortItems();
@@ -59,7 +75,7 @@ void MainWindow::on_pushButton_add_t_clicked()
 			if(ui->listWidget_t->item(i)->text() == ui->lineEdit_new_t->text())
 				return;
 		QListWidgetItem *item = new QListWidgetItem();
-		item->setData(Qt::DisplayRole, l.toDouble(ui->lineEdit_new_t->text()));
+		item->setData(Qt::DisplayRole, lang.toDouble(ui->lineEdit_new_t->text()));
 		ui->listWidget_t->addItem(item);
 	}
 	ui->listWidget_t->sortItems();
@@ -112,21 +128,22 @@ double psi(double r) {
 }
 void MainWindow::on_pushButton_start_clicked()
 {
-	if(!check_inruts()) {
-		QMessageBox::warning(this, "Внимание!", "Не корректно введены параметры");
-		return;
+	if(!check_steadiness()) {
+		int ret = QMessageBox::warning(this, "Внимание", "Схема не устойчива, продолжить вычисления?",
+							 QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No);
+		if(ret == QMessageBox::StandardButton::No) return;
 	}
 	ISolver* sol;
 	QVector<HorizontalCollector>* hor_coll = new QVector<HorizontalCollector>;
 	QVector<VerticalCollector>* vert_coll = new QVector<VerticalCollector>;
 	for(int i = 0; i < ui->listWidget_t->count(); i++) {
-		double t = l.toDouble(ui->listWidget_t->item(i)->text());
-		if(t <= l.toDouble(ui->lineEdit_T->text()))
+		double t = lang.toDouble(ui->listWidget_t->item(i)->text());
+		if(t <= lang.toDouble(ui->lineEdit_T->text()))
 			hor_coll->push_back(HorizontalCollector(t));
 	}
 	for(int i = 0; i < ui->listWidget_r->count(); i++) {
-		double r = l.toDouble(ui->listWidget_r->item(i)->text());
-		if(r <= l.toDouble(ui->lineEdit_R->text()))
+		double r = lang.toDouble(ui->listWidget_r->item(i)->text());
+		if(r <= lang.toDouble(ui->lineEdit_R->text()))
 			vert_coll->push_back(VerticalCollector(r));
 	}
 
@@ -139,15 +156,15 @@ void MainWindow::on_pushButton_start_clicked()
 
 	sol->setHorCollectors(hor_coll);
 	sol->setVertCollectors(vert_coll);
-	sol->Init(l.toDouble(ui->lineEdit_R->text()),
-			  l.toDouble(ui->lineEdit_T->text()),
-			  l.toDouble(ui->lineEdit_l->text()),
-			  l.toDouble(ui->lineEdit_k->text()),
-			  l.toDouble(ui->lineEdit_c->text()),
-			  l.toDouble(ui->lineEdit_alpha->text()),
+	sol->Init(lang.toDouble(ui->lineEdit_R->text()),
+			  lang.toDouble(ui->lineEdit_T->text()),
+			  lang.toDouble(ui->lineEdit_l->text()),
+			  lang.toDouble(ui->lineEdit_k->text()),
+			  lang.toDouble(ui->lineEdit_c->text()),
+			  lang.toDouble(ui->lineEdit_alpha->text()),
 			  ui->lineEdit_I->text().toInt(),
 			  ui->lineEdit_K->text().toInt());
-	R = l.toDouble(ui->lineEdit_R->text());
+	R = lang.toDouble(ui->lineEdit_R->text());
 	sol->setBeginingLayer(psi);
 	LoadWindow* loading = new LoadWindow(sol);
 	loading->show();
@@ -155,7 +172,7 @@ void MainWindow::on_pushButton_start_clicked()
 
 void MainWindow::update_lable_hr() {
 	if(ui->lineEdit_I->text() != "" && ui->lineEdit_R->text() != 0) {
-		double R = l.toDouble(ui->lineEdit_R->text());
+		double R = lang.toDouble(ui->lineEdit_R->text());
 		int I = ui->lineEdit_I->text().toInt();
 		ui->label_hr->setText(QString::number(R / I));
 	}
@@ -164,7 +181,7 @@ void MainWindow::update_lable_hr() {
 }
 void MainWindow::update_lable_ht() {
 	if(ui->lineEdit_K->text() != "" && ui->lineEdit_T->text() != 0) {
-		double T = l.toDouble(ui->lineEdit_T->text());
+		double T = lang.toDouble(ui->lineEdit_T->text());
 		int K = ui->lineEdit_K->text().toInt();
 		ui->label_ht->setText(QString::number(T / K));
 	}
@@ -178,27 +195,41 @@ bool MainWindow::check_inruts()
 	if(ui->lineEdit_K->text() == "") return false;
 
 	if(ui->lineEdit_R->text() == "") return false;
-	if(l.toDouble(ui->lineEdit_R->text()) == 0) return false;
+	if(lang.toDouble(ui->lineEdit_R->text()) == 0) return false;
 	if(ui->lineEdit_k->text() == "") return false;
 	if(ui->lineEdit_l->text() == "") return false;
-	if(l.toDouble(ui->lineEdit_l->text()) == 0) return false;
+	if(lang.toDouble(ui->lineEdit_l->text()) == 0) return false;
 	if(ui->lineEdit_c->text() == "") return false;
-	if(l.toDouble(ui->lineEdit_c->text()) == 0) return false;
+	if(lang.toDouble(ui->lineEdit_c->text()) == 0) return false;
 	if(ui->lineEdit_alpha->text() == "") return false;
 	if(ui->lineEdit_T->text() == "") return false;
-	if(l.toDouble(ui->lineEdit_T->text()) == 0) return false;
+	if(lang.toDouble(ui->lineEdit_T->text()) == 0) return false;
 
 	if(ui->listWidget_r->count() == 0 && ui->listWidget_t->count() == 0) return false;
 	return true;
 }
 
+bool MainWindow::check_steadiness()
+{
+	if(!ui->radioButton_1->isChecked()) return true;
+	double k = lang.toDouble(ui->lineEdit_k->text());
+	double c = lang.toDouble(ui->lineEdit_c->text());
+	double l = lang.toDouble(ui->lineEdit_l->text());
+	double alpha = lang.toDouble(ui->lineEdit_alpha->text());
+	double hr = lang.toDouble(ui->lineEdit_R->text()) / lang.toInt(ui->lineEdit_I->text());
+	double ht = lang.toDouble(ui->lineEdit_T->text()) / lang.toInt(ui->lineEdit_K->text());
+	double gama = k*ht/c/hr/hr;
+	double beta = 2*alpha*ht/c/l;
+	return 1 - 4*gama - beta >= 0;
+}
+
 void MainWindow::checkListR()
 {
 
-	double R = l.toDouble(ui->lineEdit_R->text());
+	double R = lang.toDouble(ui->lineEdit_R->text());
 	for(int i = 0; i < ui->listWidget_r->count(); i++) {
 		auto item = ui->listWidget_r->item(i);
-		if(l.toDouble(item->text()) > R)
+		if(lang.toDouble(item->text()) > R)
 			item->setTextColor(Qt::GlobalColor::red);
 		else
 			item->setTextColor(QApplication::palette().text().color());
@@ -208,10 +239,10 @@ void MainWindow::checkListR()
 }
 void MainWindow::checkListT()
 {
-	double T = l.toDouble(ui->lineEdit_T->text());
+	double T = lang.toDouble(ui->lineEdit_T->text());
 	for(int i = 0; i < ui->listWidget_t->count(); i++) {
 		auto item = ui->listWidget_t->item(i);
-		if(l.toDouble(item->text()) > T)
+		if(lang.toDouble(item->text()) > T)
 			item->setTextColor(Qt::GlobalColor::red);
 		else
 			item->setTextColor(QApplication::palette().text().color());
@@ -252,5 +283,10 @@ void MainWindow::on_lineEdit_new_r_returnPressed()
 void MainWindow::on_lineEdit_new_t_returnPressed()
 {
 	ui->pushButton_add_t->clicked();
+}
+
+void MainWindow::checkInputs()
+{
+	ui->pushButton_start->setEnabled(check_inruts());
 }
 

@@ -5,6 +5,7 @@
 #include "Schemes/isolver.h"
 #include "showwindow.h"
 #include <QThread>
+#include <QCloseEvent>
 
 namespace Ui {
 class loadwindow;
@@ -19,7 +20,7 @@ public:
 	~LoadWindow();
 
 private slots:
-	void on_pushButton_cancel_clicked();
+	bool on_pushButton_cancel_clicked();
 	void GetResult();
 	void Progress(double percent);
 	void on_pushButton_start_stop_clicked();
@@ -31,6 +32,9 @@ private:
 	QVector<HorizontalCollector>* hor_coll;
 	QVector<VerticalCollector>* vert_coll;
 	bool isStarting = true;
+
+protected:
+	void closeEvent(QCloseEvent* event) override;
 };
 
 #endif // LOADWINDOW_H

@@ -1,6 +1,6 @@
 #include "loadwindow.h"
 #include "ui_loadwindow.h"
-
+#include <QMessageBox>
 
 LoadWindow::LoadWindow(ISolver* solver, QWidget *parent) :
 	QWidget(parent),
@@ -24,13 +24,18 @@ LoadWindow::~LoadWindow()
 	delete ui;
 }
 
-void LoadWindow::on_pushButton_cancel_clicked()
+bool LoadWindow::on_pushButton_cancel_clicked()
 {
-	solver->Stop();
-	solver->deleteLater();
-	delete hor_coll;
-	delete vert_coll;
-	this->close();
+	if(QMessageBox::warning(this, "Внимание", "При закрытие, результаты будут потеряны.\n Продолжить?",
+							QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes) {
+		solver->Stop();
+		solver->deleteLater();
+		delete hor_coll;
+		delete vert_coll;
+		this->close();
+		return true;
+	}
+	return false;
 }
 
 void LoadWindow::GetResult()
@@ -60,5 +65,11 @@ void LoadWindow::on_pushButton_start_stop_clicked()
 		QMetaObject::invokeMethod(solver, "Start");
 		ui->pushButton_start_stop->setText("Пауза");
 	}
+}
+
+void LoadWindow::closeEvent(QCloseEvent* event)
+{
+	if(!on_pushButton_cancel_clicked())
+		event->ignore();
 }
 

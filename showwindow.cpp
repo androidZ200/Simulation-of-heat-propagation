@@ -27,6 +27,8 @@ ShowWindow::ShowWindow(int I, int K, double R, double T, QVector<HorizontalColle
 	connect(ui->radioButton_t, &QRadioButton::clicked, this, &ShowWindow::updateList);
 	ui->openGLWidget->StylePlane().show_grid = true;
 	ui->openGLWidget->StylePlane().is_moving = false;
+
+	ui->lineEdit->setValidator(new QDoubleValidator(0, 1e9, 9, this));
 }
 
 ShowWindow::~ShowWindow()
@@ -56,6 +58,7 @@ void ShowWindow::updateList()
 		for(int i = 0; i < hor_coll->size(); i++)
 			ui->openGLWidget->addGraphics((*hor_coll)[i].getArray(), I+1, 0, R);
 		setStepHorizontalGrid(R);
+		ui->label->setText("r = ");
 	}
 	else {
 		ui->openGLWidget->SetPositin(QRectF(-T*0.1, 1.1, T*1.2, -1.2));
@@ -64,9 +67,11 @@ void ShowWindow::updateList()
 		for(int i = 0; i < vert_coll->size(); i++)
 			ui->openGLWidget->addGraphics((*vert_coll)[i].getArray(), K+1, 0, T);
 		setStepHorizontalGrid(T);
+		ui->label->setText("t = ");
 	}
 	setCheckedItems();
 	redrawgraphics();
+	on_lineEdit_textChanged(ui->lineEdit->text());
 }
 void ShowWindow::redrawgraphics()
 {
@@ -100,6 +105,7 @@ void ShowWindow::setStepHorizontalGrid(double X)
 void ShowWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 {
 	redrawgraphics();
+	on_lineEdit_textChanged(ui->lineEdit->text());
 }
 
 
@@ -124,5 +130,51 @@ void ShowWindow::on_pushButton_save_clicked()
 			msg.exec();
 		}
 	}
+}
+
+
+void ShowWindow::on_lineEdit_textChanged(const QString &arg1)
+{
+	QLocale lang(QLocale::German);
+	if(ui->listWidget->selectedItems().size() == 0 || ui->lineEdit->text() == "") {
+		ui->label_2->setText("u = NaN");
+		return;
+	}
+	if(ui->radioButton_r->isChecked()) {
+
+		double r = lang.toDouble(ui->lineEdit->text());
+		if(r < 0 || r > R)
+			ui->label_2->setText("u = NaN");
+		else ui->label_2->setText("u = " + QString::number(Value(getArray(), I, r/R)));
+	}
+	else {
+
+		double t = lang.toDouble(ui->lineEdit->text());
+		if(t < 0 || t > T)
+			ui->label_2->setText("u = NaN");
+		else ui->label_2->setText("u = " + QString::number(Value(getArray(), K, t/T)));
+	}
+}
+
+double ShowWindow::Value(double* arr, int N, double x)
+{
+	return arr[(int)(N*x)];
+}
+
+double* ShowWindow::getArray()
+{
+	auto items = ui->listWidget->selectedItems();
+	if (items.size() == 0) return 0;
+	if(ui->radioButton_r->isChecked()) {
+		for(int i = 0; i < hor_coll->size(); i++)
+			if(ui->listWidget->item(i) == items[0])
+				return (*hor_coll)[i].getArray();
+	}
+	else {
+		for(int i = 0; i < vert_coll->size(); i++)
+			if(ui->listWidget->item(i) == items[0])
+				return (*vert_coll)[i].getArray();
+	}
+	return 0;
 }
 

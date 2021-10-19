@@ -29,12 +29,14 @@ private slots:
 private slots:
 	void redrawgraphics();
 	void setStepHorizontalGrid(double X);
-
 	void on_listWidget_itemClicked(QListWidgetItem *item);
-
 	void on_pushButton_save_clicked();
+	void on_lineEdit_textChanged(const QString &arg1);
 
 private:
+	double Value(double* arr, int N, double x);
+	double* getArray();
+
 	Ui::ShowWindow *ui;
 	QVector<HorizontalCollector> *hor_coll;
 	QVector<VerticalCollector> *vert_coll;
