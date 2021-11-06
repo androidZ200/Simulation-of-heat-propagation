@@ -28,6 +28,7 @@ bool LoadWindow::on_pushButton_cancel_clicked()
 {
 	if(QMessageBox::warning(this, "Внимание", "При закрытие, результаты будут потеряны.\n Продолжить?",
 							QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes) {
+		isStarting = false;
 		solver->Stop();
 		solver->deleteLater();
 		delete hor_coll;
@@ -40,6 +41,7 @@ bool LoadWindow::on_pushButton_cancel_clicked()
 
 void LoadWindow::GetResult()
 {
+	isStarting = false;
 	ShowWindow *win = new ShowWindow(solver->getI(), solver->getK(),
 			solver->getR(), solver->getT(), hor_coll, vert_coll);
 	solver->deleteLater();
@@ -69,7 +71,7 @@ void LoadWindow::on_pushButton_start_stop_clicked()
 
 void LoadWindow::closeEvent(QCloseEvent* event)
 {
-	if(!on_pushButton_cancel_clicked())
+	if(isStarting && !on_pushButton_cancel_clicked())
 		event->ignore();
 }
 

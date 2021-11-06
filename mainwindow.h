@@ -32,13 +32,14 @@ private slots:
 	void on_lineEdit_T_textChanged(const QString &arg1);
 	void on_lineEdit_new_r_returnPressed();
 	void on_lineEdit_new_t_returnPressed();
-	void checkInputs();
 
 private:
 	void update_lable_hr();
 	void update_lable_ht();
 	bool check_inruts();
+	void checkInputs();
 	bool check_steadiness();
+	bool check_list_points();
 	void checkListR();
 	void checkListT();
 

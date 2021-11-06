@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent)
 	update_lable_hr();
 	update_lable_ht();
 
+
+
 	connect(ui->lineEdit_I, &QLineEdit::textChanged, this, &MainWindow::checkInputs);
 	connect(ui->lineEdit_K, &QLineEdit::textChanged, this, &MainWindow::checkInputs);
 	connect(ui->lineEdit_R, &QLineEdit::textChanged, this, &MainWindow::checkInputs);
@@ -205,13 +207,13 @@ bool MainWindow::check_inruts()
 	if(ui->lineEdit_T->text() == "") return false;
 	if(lang.toDouble(ui->lineEdit_T->text()) == 0) return false;
 
-	if(ui->listWidget_r->count() == 0 && ui->listWidget_t->count() == 0) return false;
+	if(!check_list_points()) return false;
 	return true;
 }
 
 bool MainWindow::check_steadiness()
 {
-	if(!ui->radioButton_1->isChecked()) return true;
+	if(ui->radioButton_2->isChecked()) return true;
 	double k = lang.toDouble(ui->lineEdit_k->text());
 	double c = lang.toDouble(ui->lineEdit_c->text());
 	double l = lang.toDouble(ui->lineEdit_l->text());
@@ -220,7 +222,28 @@ bool MainWindow::check_steadiness()
 	double ht = lang.toDouble(ui->lineEdit_T->text()) / lang.toInt(ui->lineEdit_K->text());
 	double gama = k*ht/c/hr/hr;
 	double beta = 2*alpha*ht/c/l;
-	return 1 - 4*gama - beta >= 0;
+
+	if(ui->radioButton_1->isChecked())
+		return 1 - 4*gama - beta >= 0;
+	else
+		return 1 - 2*gama - beta/2 >= 0;
+}
+
+bool MainWindow::check_list_points()
+{
+	double R = lang.toDouble(ui->lineEdit_R->text());
+	for(int i = 0; i < ui->listWidget_r->count(); i++) {
+		auto item = ui->listWidget_r->item(i);
+		if(lang.toDouble(item->text()) <= R) return true;
+	}
+
+	double T = lang.toDouble(ui->lineEdit_T->text());
+	for(int i = 0; i < ui->listWidget_t->count(); i++) {
+		auto item = ui->listWidget_t->item(i);
+		if(lang.toDouble(item->text()) <= T) return true;
+	}
+
+	return false;
 }
 
 void MainWindow::checkListR()
