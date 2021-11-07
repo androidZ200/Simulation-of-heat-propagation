@@ -24,6 +24,11 @@ struct GLPlaneStyle {
 
 	bool is_moving;
 	ResizeStyle resize_style;
+
+	bool show_name_axis;
+	bool show_coord;
+	QString X_name;
+	QString Y_name;
 };
 struct GlGraphicStyle {
 	QColor color;
@@ -71,12 +76,20 @@ protected:
 	void wheelEvent(QWheelEvent* pe) override;
 
 	virtual void drawGrid();
+	virtual void drawCoord();
 	virtual void drawAxis();
 	virtual void drawGrpg(int index) = 0;
 	void updateBackground();
 	void setDefaultPlaneStyle();
 	void setDefaultGraphicStyle();
 	int findIndexX(int index, double x);
+	void renderText(double x, double y, QColor col, int size, QString text);
+	int project(double objx, double objy,
+		const double model[16], const double proj[16],
+		const int viewport[4],
+		double * winx, double * winy);
+	void transformPoint(double out[4], const double m[16], const double in[4]);
+
 
 	QSize win;          // размер окна отрисовки
 	QRectF rec;         // прямоугоник в плоскости, который отображается

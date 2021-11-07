@@ -27,6 +27,8 @@ ShowWindow::ShowWindow(int I, int K, double R, double T, QVector<HorizontalColle
 	connect(ui->radioButton_t, &QRadioButton::clicked, this, &ShowWindow::updateList);
 	ui->openGLWidget->StylePlane().show_grid = true;
 	ui->openGLWidget->StylePlane().is_moving = false;
+	ui->openGLWidget->StylePlane().Y_name = "u";
+	ui->openGLWidget->StylePlane().show_coord = true;
 
 	ui->lineEdit->setValidator(new QDoubleValidator(0, 1e9, 9, this));
 }
@@ -59,6 +61,7 @@ void ShowWindow::updateList()
 			ui->openGLWidget->addGraphics((*hor_coll)[i].get_array(), I+1, 0, R);
 		setStepHorizontalGrid(R);
 		ui->label->setText("r = ");
+		ui->openGLWidget->StylePlane().X_name = "r";
 	}
 	else {
 		ui->openGLWidget->SetPositin(QRectF(-T*0.1, 1.1, T*1.2, -1.2));
@@ -68,6 +71,7 @@ void ShowWindow::updateList()
 			ui->openGLWidget->addGraphics((*vert_coll)[i].get_array(), K+1, 0, T);
 		setStepHorizontalGrid(T);
 		ui->label->setText("t = ");
+		ui->openGLWidget->StylePlane().X_name = "t";
 	}
 	setCheckedItems();
 	redrawgraphics();
@@ -83,7 +87,7 @@ void ShowWindow::redrawgraphics()
 			ui->openGLWidget->graphicStyle(i).hiden = true;
 		if(s_items.contains(ui->listWidget->item(i))) {
 			ui->openGLWidget->graphicStyle(i).color = QColor::fromRgb(0, 0, 180);
-			ui->openGLWidget->graphicStyle(i).weight = 1.5f;
+			ui->openGLWidget->graphicStyle(i).weight = 2.0f;
 		}
 		else {
 			ui->openGLWidget->graphicStyle(i).color = QColor::fromRgb(100, 0, 0);
