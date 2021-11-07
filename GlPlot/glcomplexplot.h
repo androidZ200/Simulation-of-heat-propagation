@@ -21,7 +21,7 @@ public:
 	~GlComplexPlot() override;
 
 	void addGraphics(std::complex<double> (*f)(double), double start, double end, double step);
-	void addGraphics(std::complex<double>* f, int N, double start, double end);
+	void addGraphics(const std::complex<double>* f, int N, double start, double end);
 	void deleteGraphics(int index) override;
 	int countGraphics() const override;
 	void setGraphicStyle(GlGraphicStyle style, int index) override;

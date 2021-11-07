@@ -34,8 +34,8 @@ private slots:
 	void on_lineEdit_textChanged(const QString &arg1);
 
 private:
-	double Value(double* arr, int N, double x);
-	double* getArray();
+	double Value(const double* arr, int N, double x);
+	const double* getArray();
 
 	Ui::ShowWindow *ui;
 	QVector<HorizontalCollector> *hor_coll;

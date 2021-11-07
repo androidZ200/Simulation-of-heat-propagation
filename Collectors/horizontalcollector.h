@@ -1,22 +1,15 @@
 #ifndef HORIZONTALCOLLECTOR_H
 #define HORIZONTALCOLLECTOR_H
 
-class HorizontalCollector
-{
-	double* array = 0;
-	double t;
-	int index;
+#include "icollector.h"
 
+class HorizontalCollector : public ICollector
+{
 public:
 	HorizontalCollector(double t);
-	~HorizontalCollector();
+	~HorizontalCollector() override;
 
-	void init(double T, int K, int size);
-	int getIndex() const;
-	double getT() const;
 	double* setArray(double* arr);
-
-	double* getArray() const;
 };
 
 #endif // HORIZONTALCOLLECTOR_H

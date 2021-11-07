@@ -95,10 +95,10 @@ void ISolver::Start()
 	int end;
 	isWork = true;
 	QVector<HorizontalCollector>::iterator iter = hor_coll->begin();
-	while(iter != hor_coll->end() && iter->getIndex() < cur_index) ++iter;
+	while(iter != hor_coll->end() && iter->get_index() < cur_index) ++iter;
 
 	while(iter != hor_coll->end()) {
-		end = iter->getIndex();
+		end = iter->get_index();
 		solv_to(end, cur_index);
 		if(!isWork) return;
 		second_array = iter->setArray(second_array);
@@ -124,7 +124,7 @@ void ISolver::Stop()
 void ISolver::saveVertColl()
 {
 	for(auto &x : *vert_coll)
-		x.setItem(first_array[x.getIndex()]);
+		x.setItem(first_array[x.get_index()]);
 }
 
 void ISolver::solv_to(int end, int& ind)

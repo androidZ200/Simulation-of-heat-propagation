@@ -54,18 +54,18 @@ void ShowWindow::updateList()
 	if(ui->radioButton_r->isChecked()) {
 		ui->openGLWidget->SetPositin(QRectF(-R*0.1, 1.1, R*1.2, -1.2));
 		for(int i = 0; i < hor_coll->size(); i++)
-			ui->listWidget->addItem("t = " + QString::number((*hor_coll)[i].getT()));
+			ui->listWidget->addItem("t = " + QString::number((*hor_coll)[i].get_point()));
 		for(int i = 0; i < hor_coll->size(); i++)
-			ui->openGLWidget->addGraphics((*hor_coll)[i].getArray(), I+1, 0, R);
+			ui->openGLWidget->addGraphics((*hor_coll)[i].get_array(), I+1, 0, R);
 		setStepHorizontalGrid(R);
 		ui->label->setText("r = ");
 	}
 	else {
 		ui->openGLWidget->SetPositin(QRectF(-T*0.1, 1.1, T*1.2, -1.2));
 		for(int i = 0; i < vert_coll->size(); i++)
-			ui->listWidget->addItem("r = " + QString::number((*vert_coll)[i].getR()));
+			ui->listWidget->addItem("r = " + QString::number((*vert_coll)[i].get_point()));
 		for(int i = 0; i < vert_coll->size(); i++)
-			ui->openGLWidget->addGraphics((*vert_coll)[i].getArray(), K+1, 0, T);
+			ui->openGLWidget->addGraphics((*vert_coll)[i].get_array(), K+1, 0, T);
 		setStepHorizontalGrid(T);
 		ui->label->setText("t = ");
 	}
@@ -119,11 +119,11 @@ void ShowWindow::on_pushButton_save_clicked()
 			QDataStream out(&file);
 			if(ui->radioButton_r->isChecked()) {
 				out << I+1 << R;
-				out.writeBytes((char*)(*hor_coll)[i].getArray(), (I+1)*sizeof(double));
+				out.writeBytes((char*)(*hor_coll)[i].get_array(), (I+1)*sizeof(double));
 			}
 			else {
 				out << K+1 << T;
-				out.writeBytes((char*)(*vert_coll)[i].getArray(), (K+1)*sizeof(double));
+				out.writeBytes((char*)(*vert_coll)[i].get_array(), (K+1)*sizeof(double));
 			}
 			QMessageBox msg;
 			msg.setText("Graphic has saved");
@@ -156,24 +156,24 @@ void ShowWindow::on_lineEdit_textChanged(const QString &arg1)
 	}
 }
 
-double ShowWindow::Value(double* arr, int N, double x)
+double ShowWindow::Value(const double* arr, int N, double x)
 {
 	return arr[(int)(N*x)];
 }
 
-double* ShowWindow::getArray()
+const double* ShowWindow::getArray()
 {
 	auto items = ui->listWidget->selectedItems();
 	if (items.size() == 0) return 0;
 	if(ui->radioButton_r->isChecked()) {
 		for(int i = 0; i < hor_coll->size(); i++)
 			if(ui->listWidget->item(i) == items[0])
-				return (*hor_coll)[i].getArray();
+				return (*hor_coll)[i].get_array();
 	}
 	else {
 		for(int i = 0; i < vert_coll->size(); i++)
 			if(ui->listWidget->item(i) == items[0])
-				return (*vert_coll)[i].getArray();
+				return (*vert_coll)[i].get_array();
 	}
 	return 0;
 }

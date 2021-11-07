@@ -20,7 +20,7 @@ public:
 	~GlRealPlot() override;
 
 	void addGraphics(double (*f)(double), double start, double end, double step);
-	void addGraphics(double* f, int N, double start, double end);
+	void addGraphics(const double* f, int N, double start, double end);
 	void deleteGraphics(int index) override;
 	int countGraphics() const override;
 	void setGraphicStyle(GlGraphicStyle style, int index) override;

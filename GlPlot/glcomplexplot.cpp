@@ -73,7 +73,7 @@ void GlComplexPlot::addGraphics(std::complex<double> (*f)(double), double start,
 }
 
 
-void GlComplexPlot::addGraphics(std::complex<double> *f, int N, double start, double end)
+void GlComplexPlot::addGraphics(const std::complex<double> *f, int N, double start, double end)
 {
 	QVector<QPair<double, std::complex<double>>> graph;
 	double h = (end - start) / (N - 1);

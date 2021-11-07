@@ -46,7 +46,7 @@ void GlRealPlot::addGraphics(double (*f)(double), double start, double end, doub
 }
 
 
-void GlRealPlot::addGraphics(double *f, int N, double start, double end)
+void GlRealPlot::addGraphics(const double *f, int N, double start, double end)
 {
 	QVector<QPair<double, double>> graph;
 	double h = (end - start) / (N - 1);
